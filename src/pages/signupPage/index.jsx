@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Footer from "../../components/Footer";
 import Input from "../../components/Input";
 import Navbar from "../../components/Navbar";
+import Loader from "../../components/Loader"
 import { useState } from "react";
 import { auth } from "../../firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -11,24 +12,33 @@ function SignupPage() {
   const [fullName, setfullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-
+    setLoading(true)
     try {
+      
       const addUser = createUserWithEmailAndPassword(auth, email, password);
       updateProfile((await addUser).user, {
         displayName: fullName,
       });
 
+      navigate("/")
+    
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false)
     }
   };
 
   return (
     <>
       <Navbar />
+      {loading && <Loader/>}
+      
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-4">
         <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 animate__animated animate__slideInDown">
