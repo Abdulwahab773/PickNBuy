@@ -1,6 +1,15 @@
+import { useEffect } from "react";
 import Button  from "./Button";
 
-function Cart({ isOpen, onClose }) {
+function Cart({ isOpen, onClose, cartProduct }) {
+
+  
+  
+
+  // useEffect(() => {
+
+  // }, [])
+
   return (
     <div
       className={`fixed inset-0 z-50 transition-transform duration-300 ${
@@ -28,9 +37,10 @@ function Cart({ isOpen, onClose }) {
 
         {/* Cart Items (dummy for now) */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          
           <div className="flex items-center gap-3">
             <img
-              src="https://via.placeholder.com/60"
+              src="svsd"
               alt="Product"
               className="w-16 h-16 rounded-lg object-cover"
             />

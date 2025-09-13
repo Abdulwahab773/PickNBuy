@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Cart from "./Cart";
 import CartButton from "./CartButton";
 import { LuLogOut } from "react-icons/lu";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
-const Navbar = ({ isUser }) => {
+const Navbar = ({ isUser, cartItem }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  
+  const logoutUser = async () => {
+    try {
+      await signOut(auth);
+      console.log("User signed out successfully.");
+    } catch (error) {
+      console.error("Sign Out Error", error);
+    }
+  }
+
 
   return (
     <nav className="w-full bg-white shadow-lg">
@@ -34,15 +47,21 @@ const Navbar = ({ isUser }) => {
             </Link>
           ) : (
             <>
-            <CartButton onClick={() => setIsCartOpen(true)} itemCount={3} />
-            <LuLogOut />
+              <CartButton onClick={() => setIsCartOpen(true)} itemCount={3} />
+
+              <button
+                onClick={logoutUser}
+                className=" cursor-pointer  flex items-center gap-2 bg-gradient-to-r bg-red-600 hover:from-red-700 hover:to-red-500 text-white p-2.5 rounded-full shadow-lg transition-all duration-300"
+              >
+                <LuLogOut size={20} />
+                Logout
+              </button>
             </>
           )}
-
         </ul>
       </div>
 
-      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartProduct={cartItem} />
     </nav>
   );
 };

@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
+import Loader from "../../components/Loader";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,16 +16,17 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
+
     try {
-    
-      const loginUser = signInWithEmailAndPassword(auth, email, password);
-      navigate("/")
-    
+
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 

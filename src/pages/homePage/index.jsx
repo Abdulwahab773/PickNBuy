@@ -16,8 +16,8 @@ function HomePage() {
   const [searchProduct, setSearchProduct] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [addToCartProduct, setAddToCartProduct] = useState([]);
 
-  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -30,15 +30,9 @@ function HomePage() {
     return () => unsubscribe();
   }, []);
 
-  
-  
-  
   useEffect(() => {
     getProducts();
   }, []);
-
-  
-  
 
   useEffect(() => {
     if (products.length > 0) {
@@ -50,8 +44,6 @@ function HomePage() {
     }
   }, [products]);
 
-  
-  
   const getProducts = async () => {
     setLoading(true);
     try {
@@ -64,22 +56,19 @@ function HomePage() {
     }
   };
 
-  
-  
   const filteredProducts = products.filter((p) => {
     const matchCategory =
       selectedCategory === "All" || p.category === selectedCategory;
     const matchSearch = p.title
       .toLowerCase()
       .includes(searchProduct.toLowerCase());
+
     return matchCategory && matchSearch;
   });
 
-
-
   return (
     <div className="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
-      <Navbar isUser={checkUser} />
+      <Navbar isUser={checkUser} cartItem={addToCartProduct} />
 
       {loading && <Loader />}
 
@@ -151,8 +140,19 @@ function HomePage() {
                       ({product.rating.count} reviews)
                     </span>
                   </div>
-
-                  <Button label="Add to Cart" onClick={() => {}} />
+                  <Button
+                    label="Add to Cart"
+                    onClick={() => {
+                      setAddToCartProduct((prev) => [
+                        ...prev,
+                        {
+                          name: product.title,
+                          imgUrl: product.image,
+                          price: product.price,
+                        },
+                      ]);                      
+                    }}
+                  />
                 </div>
               </div>
             ))
