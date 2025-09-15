@@ -21,7 +21,7 @@ const Navbar = ({ isUser, cartItem }) => {
 
 
   return (
-    <nav className="w-full bg-white shadow-lg">
+    <nav className="fixed 0 w-full bg-white shadow-lg">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         <h1 className="text-3xl cursor-pointer font-bold text-indigo-600 transform hover:scale-105 duration-200">
           PickNBuy

@@ -34,6 +34,8 @@ function HomePage() {
     getProducts();
   }, []);
 
+
+
   useEffect(() => {
     if (products.length > 0) {
       const uniqueCategories = [
@@ -149,6 +151,7 @@ function HomePage() {
                           name: product.title,
                           imgUrl: product.image,
                           price: product.price,
+                          id: product.id
                         },
                       ]);                      
                     }}
