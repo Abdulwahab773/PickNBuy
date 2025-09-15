@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "../../firebase";
 import Navbar from "../../components/Navbar";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Loader from "../../components/Loader";
-import "animate.css";
 import Footer from "../../components/Footer";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
 import axios from "axios";
+import "animate.css";
 
 function HomePage() {
   const [checkUser, setCheckUser] = useState(null);
@@ -16,7 +17,8 @@ function HomePage() {
   const [searchProduct, setSearchProduct] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [addToCartProduct, setAddToCartProduct] = useState([]);
+  const [addToCartProduct, setAddToCartProduct] = useState({});
+  const [itemSent, setItemSent] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -33,8 +35,6 @@ function HomePage() {
   useEffect(() => {
     getProducts();
   }, []);
-
-
 
   useEffect(() => {
     if (products.length > 0) {
@@ -68,14 +68,41 @@ function HomePage() {
     return matchCategory && matchSearch;
   });
 
+
+  const addToBackend = async (cartItem) => {
+    try {
+
+      const q = query(
+        collection(db, "orderItems"),
+        where("uid", "==", cartItem.uid),
+        where("id", "==", cartItem.id) 
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        alert("This product is already in your cart 🛒");
+        return;
+      }
+
+      const docRef = await addDoc(collection(db, "orderItems"), cartItem);
+      console.log("Document written with ID: ", docRef.id);
+      setItemSent((prev) => prev + 1);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+    
+  };
+
+
   return (
     <div className="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
-      <Navbar isUser={checkUser} cartItem={addToCartProduct} />
+      <Navbar isUser={checkUser} itemAdded={itemSent} />
 
       {loading && <Loader />}
 
-      <div className="text-center py-36 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl">
-        <h2 className="text-5xl font-extrabold drop-shadow-md animate__animated animate__backInDown">
+      <div className=" text-center py-36 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl">
+        <h2 className="text-5xl font-extrabold  drop-shadow-md animate__animated animate__backInDown">
           Welcome to PickNBuy
         </h2>
         <p className="text-lg mt-3 opacity-90">
@@ -145,15 +172,16 @@ function HomePage() {
                   <Button
                     label="Add to Cart"
                     onClick={() => {
-                      setAddToCartProduct((prev) => [
-                        ...prev,
-                        {
-                          name: product.title,
-                          imgUrl: product.image,
-                          price: product.price,
-                          id: product.id
-                        },
-                      ]);                      
+                      const productObj = {
+                        name: product.title,
+                        imgUrl: product.image,
+                        price: product.price,
+                        id: product.id,
+                        uid: checkUser,
+                      };
+
+                      setAddToCartProduct(productObj);
+                      addToBackend(productObj);
                     }}
                   />
                 </div>

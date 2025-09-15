@@ -6,9 +6,10 @@ import { LuLogOut } from "react-icons/lu";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
-const Navbar = ({ isUser, cartItem }) => {
+const Navbar = ({ isUser, itemAdded }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  
   
   const logoutUser = async () => {
     try {
@@ -21,7 +22,7 @@ const Navbar = ({ isUser, cartItem }) => {
 
 
   return (
-    <nav className="fixed 0 w-full bg-white shadow-lg">
+    <nav className="fixed 0 w-full bg-white shadow-xl z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         <h1 className="text-3xl cursor-pointer font-bold text-indigo-600 transform hover:scale-105 duration-200">
           PickNBuy
@@ -47,7 +48,7 @@ const Navbar = ({ isUser, cartItem }) => {
             </Link>
           ) : (
             <>
-              <CartButton onClick={() => setIsCartOpen(true)} itemCount={3} />
+              <CartButton onClick={() => setIsCartOpen(true)} itemCount={3}  />
 
               <button
                 onClick={logoutUser}
@@ -61,7 +62,8 @@ const Navbar = ({ isUser, cartItem }) => {
         </ul>
       </div>
 
-      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartProduct={cartItem} />
+      {/* <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartProduct={cartItem} /> */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} userUid={isUser} itemAdded={itemAdded} />
     </nav>
   );
 };
